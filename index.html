@@ -1,0 +1,58 @@
+<div>
+    <canvas id="board" width="500" height="500"></canvas>
+</div>
+<div>
+    Enter solution: <input id="steps" width="300"/><br/>
+    Enter Game:<br/><textarea id="game" width="300" height="50"></textarea>
+</div>
+<button onclick="startgame()">Start</button><br/>
+<span id="message"/>
+<script>
+
+    // Load the required components
+    window.onload=function(){
+        canv = document.getElementById("board");
+        ctx = canv.getContext("2d");
+        started = false;
+    }
+
+    gameSize = 0;
+    gameData = {};
+    tileSize = 0;
+    tileSpace = 15;
+
+    // Called by the button
+    function startgame() {
+        try {
+            gameData = JSON.parse(document.getElementById("game").value);
+            gameSize = gameData.puzzle.length;
+            tileSize = (canv.width - ((gameSize + 1) * tileSpace)) / gameSize;
+
+            console.log("Game size "+gameSize);
+            game()
+        } catch (ex) {
+            console.log(ex);
+        }
+    }
+
+    // Run the game
+    function game() {
+        // black out the board
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canv.width, canv.height);
+
+        // count along the rows and columns
+        ctx.fillStyle = "lime";
+        xPos = yPos = tileSpace;
+        for (x = 0; x < gameSize; x++){
+            for (y = 0; y < gameSize; y++) {
+                ctx.fillRect(xPos, yPos, tileSize, tileSize);
+                yPos += tileSize + tileSpace;
+            }
+            yPos = tileSpace;
+            xPos += tileSize + tileSpace;
+        }
+    }
+
+    
+</script>
