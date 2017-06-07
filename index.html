@@ -71,15 +71,15 @@
 
         // Render
         xPos = yPos = tileSpace;
-        for (y = 0; y < gameSize; y++){
-            for (x = 0; x < gameSize; x++) {
+        for (x = 0; x < gameSize; x++){
+            for (y = 0; y < gameSize; y++) {
                 
                 // render and find the gap
-                if (gameData.puzzle[x][y] != -1) {
+                if (gameData.puzzle[y][x] != -1) {
                     ctx.fillStyle = "lime";
                     ctx.fillRect(xPos, yPos, tileSize, tileSize);
                     ctx.fillStyle = "black"
-                    ctx.fillText(gameData.puzzle[x][y], xPos + 48, yPos + 48);
+                    ctx.fillText(gameData.puzzle[y][x], xPos + 48, yPos + 48);
                 } else {
                     gapX = x;
                     gapY = y;
@@ -92,10 +92,19 @@
         }
     }
 
+    // check for a sucess state
+    function checkGame() {
+
+    }
+
     // Run the game
     function game() {
 
         // Perform the move
+        if (moves.length == 0) {
+            checkGame();
+            return;
+        }
         move = moves[0];
         moves = moves.slice(1);
 
@@ -106,8 +115,8 @@
                     stopgame("Cannot shift up on bottom edge");
                     break;
                 }
-                gameData.puzzle[gapX][gapY] = gameData.puzzle[gapX][gapY + 1];
-                gameData.puzzle[gapX][gapY + 1] = -1;
+                gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY + 1][gapX];
+                gameData.puzzle[gapY + 1][gapX] = -1;
                 break;
             case "d":
             case "D":
