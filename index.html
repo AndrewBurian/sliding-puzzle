@@ -2,7 +2,7 @@
     <canvas id="board" width="500" height="500"></canvas>
 </div>
 <div>
-    Enter solution: <input id="moves" size="80" placeholder="[U,D,L,R]"/><br/>
+    Enter solution: <input id="moves" size="80" placeholder="[&quot;U&quot;,&quot;D&quot;,&quot;L&quot;,&quot;R&quot;...]"/><br/>
     Enter Game:<br/><textarea id="game" rows="10" cols="80"></textarea>
 </div>
 <button onclick="startgame()">Start</button><br/>
@@ -40,6 +40,12 @@
     // location of the space
     gapX = 0;
     gapY = 0;
+
+    // current move in progress
+    move = "x";
+    progress = 0.0;
+    movX = 0;
+    movY = 0;
 
 
 
@@ -136,11 +142,10 @@
             checkGame();
             return;
         }
-        move = moves[0];
+        move = moves[0].toUpperCase();
         moves = moves.slice(1);
 
         switch (move) {
-            case "u":
             case "U":
                 if (gapY == gameSize - 1) {
                     stopgame("Cannot shift up on bottom edge");
@@ -148,8 +153,9 @@
                 }
                 gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY + 1][gapX];
                 gameData.puzzle[gapY + 1][gapX] = -1;
+                movX = gapX;
+                movY = gapY + 1;
                 break;
-            case "d":
             case "D":
                 if (gapY == 0) {
                     stopgame("Cannot shift down on top edge");
@@ -157,8 +163,9 @@
                 }
                 gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY - 1][gapX];
                 gameData.puzzle[gapY - 1][gapX] = -1;
+                movX = gapX;
+                movY = gapY - 1;
                 break;
-            case "l":
             case "L":
                 if (gapX == gameSize - 1) {
                     stopgame("Cannot left on right edge");
@@ -166,20 +173,63 @@
                 }
                 gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY][gapX + 1];
                 gameData.puzzle[gapY][gapX + 1] = -1;
+                movX = gapX + 1;
+                movY = gapY;
                 break;
-            case "r":
             case "R":
                 if (gapX == 0) {
                     stopgame("Cannot right on left edge");
                     break;
                 }
-                gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY][gapX - 1];
-                gameData.puzzle[gapY][gapX - 1] = -1;
+                movX = gapX - 1;
+                movY = gapY;
+                gameData.puzzle[gapY][gapX] = gameData.puzzle[movY][movX];
+                gameData.puzzle[movY][movX] = -1;
                 break;
         }
 
+        progress = 0.0;
+        window.requestAnimationFrame(animationFrame);
         renderBoard(active);
 
+    }
+
+    function animationFrame() {
+        // full render
+        renderBoard(active)
+
+        // calulate tile position
+        xPos = movX * (tileSize + tileSpace) + tileSpace
+        yPos = movY * (tileSize + tileSpace) + tileSpace
+
+        // blank out the tile that's being moved
+        ctx.fillStyle = "black";
+        ctx.fillRect(xPos, yPos, tileSize, tileSize);
+
+        // fill it in a little bit towards the target
+        switch(move){
+            case "U":
+                yPos += (tileSize + tileSpace) * progress;
+                break;
+            case "D":
+                yPos -= (tileSize + tileSpace) * progress;
+                break;
+            case "L":
+                xPos -= (tileSize + tileSpace) * progress;
+                break;
+            case "R":
+                xPos += (tileSize + tileSpace) * progress;
+                break;
+        }
+        ctx.fillStyle = active;
+        ctx.fillRect(xPos, yPos, tileSize, tileSize);
+        ctx.fillStyle = "black"
+        ctx.fillText(gameData.puzzle[gapY][gapX], xPos, yPos + tileSize);
+
+        progress += (1/60);
+        if (progress < 1) {
+            window.requestAnimationFrame(animationFrame)
+        }
     }
 
     
