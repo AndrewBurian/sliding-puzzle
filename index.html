@@ -2,8 +2,8 @@
     <canvas id="board" width="500" height="500"></canvas>
 </div>
 <div>
-    Enter solution: <input id="moves" width="300"/><br/>
-    Enter Game:<br/><textarea id="game" width="3000" height="500"></textarea>
+    Enter solution: <input id="moves" size="80" placeholder="[U,D,L,R]"/><br/>
+    Enter Game:<br/><textarea id="game" rows="10" cols="80"></textarea>
 </div>
 <button onclick="startgame()">Start</button><br/>
 <span id="message"/>
@@ -50,14 +50,15 @@
             gameData = JSON.parse(document.getElementById("game").value);
             gameSize = gameData.puzzle.length;
             tileSize = (canv.width - ((gameSize + 1) * tileSpace)) / gameSize;
-            ctx.font = '48px serif';
+            ctx.font = tileSize+'px serif';
             console.log("Game size "+gameSize);
 
             // move data
             moves = JSON.parse(document.getElementById("moves").value);
 
             renderBoard(active);
-            gameInterval = setInterval(game, 1500);
+            time = 300 + (1000 / moves.length)
+            gameInterval = setInterval(game, time);
         } catch (ex) {
             console.log(ex);
         }
@@ -85,7 +86,7 @@
                     ctx.fillStyle = color;
                     ctx.fillRect(xPos, yPos, tileSize, tileSize);
                     ctx.fillStyle = "black"
-                    ctx.fillText(gameData.puzzle[y][x], xPos + 48, yPos + 48);
+                    ctx.fillText(gameData.puzzle[y][x], xPos, yPos + tileSize);
                 } else {
                     gapX = x;
                     gapY = y;
