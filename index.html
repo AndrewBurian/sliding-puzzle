@@ -16,6 +16,9 @@
         started = false;
     }
 
+    // frames it takes to move a tile (at ~60fps)
+    frameRate = 30;
+
     // size if the game board. (nxn)
     gameSize = 0;
 
@@ -64,7 +67,7 @@
 
             renderBoard(active);
             time = 300 + (1000 / moves.length)
-            gameInterval = setInterval(game, time);
+            game();
         } catch (ex) {
             console.log(ex);
         }
@@ -151,8 +154,6 @@
                     stopgame("Cannot shift up on bottom edge");
                     break;
                 }
-                gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY + 1][gapX];
-                gameData.puzzle[gapY + 1][gapX] = -1;
                 movX = gapX;
                 movY = gapY + 1;
                 break;
@@ -161,8 +162,6 @@
                     stopgame("Cannot shift down on top edge");
                     break;
                 }
-                gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY - 1][gapX];
-                gameData.puzzle[gapY - 1][gapX] = -1;
                 movX = gapX;
                 movY = gapY - 1;
                 break;
@@ -171,8 +170,6 @@
                     stopgame("Cannot left on right edge");
                     break;
                 }
-                gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY][gapX + 1];
-                gameData.puzzle[gapY][gapX + 1] = -1;
                 movX = gapX + 1;
                 movY = gapY;
                 break;
@@ -183,8 +180,6 @@
                 }
                 movX = gapX - 1;
                 movY = gapY;
-                gameData.puzzle[gapY][gapX] = gameData.puzzle[movY][movX];
-                gameData.puzzle[movY][movX] = -1;
                 break;
         }
 
@@ -209,10 +204,10 @@
         // fill it in a little bit towards the target
         switch(move){
             case "U":
-                yPos += (tileSize + tileSpace) * progress;
+                yPos -= (tileSize + tileSpace) * progress;
                 break;
             case "D":
-                yPos -= (tileSize + tileSpace) * progress;
+                yPos += (tileSize + tileSpace) * progress;
                 break;
             case "L":
                 xPos -= (tileSize + tileSpace) * progress;
@@ -224,12 +219,23 @@
         ctx.fillStyle = active;
         ctx.fillRect(xPos, yPos, tileSize, tileSize);
         ctx.fillStyle = "black"
-        ctx.fillText(gameData.puzzle[gapY][gapX], xPos, yPos + tileSize);
+        ctx.fillText(gameData.puzzle[movY][movX], xPos, yPos + tileSize);
 
-        progress += (1/60);
+        // update our progress towards the target
+        progress += (1/frameRate);
         if (progress < 1) {
-            window.requestAnimationFrame(animationFrame)
+            window.requestAnimationFrame(animationFrame);
+            return
         }
+
+        // reassignment
+        gameData.puzzle[gapY][gapX] = gameData.puzzle[movY][movX];
+        gameData.puzzle[movY][movX] = -1;
+        gapX = movX;
+        gapY = movY;
+        
+        // continue the game
+        game();
     }
 
     
