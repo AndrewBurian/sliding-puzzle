@@ -29,12 +29,18 @@
     tileSize = 0;
     tileSpace = 15;
 
+    // rendering colors
+    active = "cyan";
+    win = "lime";
+    lose = "red";
+
     // handle to game interval timer
     gameInterval = 0;
 
     // location of the space
     gapX = 0;
     gapY = 0;
+
 
 
     // Called by the button
@@ -50,7 +56,7 @@
             // move data
             moves = JSON.parse(document.getElementById("moves").value);
 
-            renderBoard();
+            renderBoard(active);
             gameInterval = setInterval(game, 1500);
         } catch (ex) {
             console.log(ex);
@@ -64,7 +70,7 @@
         window.clearInterval(gameInterval)
     }
 
-    function renderBoard() {
+    function renderBoard(color) {
         // black out the board
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canv.width, canv.height);
@@ -76,7 +82,7 @@
                 
                 // render and find the gap
                 if (gameData.puzzle[y][x] != -1) {
-                    ctx.fillStyle = "lime";
+                    ctx.fillStyle = color;
                     ctx.fillRect(xPos, yPos, tileSize, tileSize);
                     ctx.fillStyle = "black"
                     ctx.fillText(gameData.puzzle[y][x], xPos + 48, yPos + 48);
@@ -92,23 +98,33 @@
         }
     }
 
+    function winGame() {
+        renderBoard(win);
+        stopgame();
+    }
+
+    function loseGame() {
+        renderBoard(lose);
+        stopgame();
+    }
+
     // check for a sucess state
     function checkGame() {
         expected = 1;
-        for (x = 0; x < gameSize; x++){
-            for (y = 0; y < gameSize; y++) {
+        for (y = 0; y < gameSize; y++){
+            for (x = 0; x < gameSize; x++) {
                 if (gameData.puzzle[y][x] == -1) {
                     continue;
                 }
                 if (gameData.puzzle[y][x] != expected) {
-                    gameFailed();
-                    stopgame("Puzzle not complete");
+                    console.log("Expected ("+x+","+y+") to be "+expected+"\nGot: "+ gameData.puzzle[y][x])
+                    loseGame();
                     return;
                 }
                 expected++;
             }
         }
-        stopgame("You did it!");
+        winGame();
     }
 
     // Run the game
@@ -161,7 +177,7 @@
                 break;
         }
 
-        renderBoard();
+        renderBoard(active);
 
     }
 
