@@ -94,7 +94,21 @@
 
     // check for a sucess state
     function checkGame() {
-
+        expected = 1;
+        for (x = 0; x < gameSize; x++){
+            for (y = 0; y < gameSize; y++) {
+                if (gameData.puzzle[y][x] == -1) {
+                    continue;
+                }
+                if (gameData.puzzle[y][x] != expected) {
+                    gameFailed();
+                    stopgame("Puzzle not complete");
+                    return;
+                }
+                expected++;
+            }
+        }
+        stopgame("You did it!");
     }
 
     // Run the game
@@ -120,12 +134,30 @@
                 break;
             case "d":
             case "D":
+                if (gapY == 0) {
+                    stopgame("Cannot shift down on top edge");
+                    break;
+                }
+                gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY - 1][gapX];
+                gameData.puzzle[gapY - 1][gapX] = -1;
                 break;
             case "l":
             case "L":
+                if (gapX == gameSize - 1) {
+                    stopgame("Cannot left on right edge");
+                    break;
+                }
+                gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY][gapX + 1];
+                gameData.puzzle[gapY][gapX + 1] = -1;
                 break;
             case "r":
             case "R":
+                if (gapX == 0) {
+                    stopgame("Cannot right on left edge");
+                    break;
+                }
+                gameData.puzzle[gapY][gapX] = gameData.puzzle[gapY][gapX - 1];
+                gameData.puzzle[gapY][gapX - 1] = -1;
                 break;
         }
 
