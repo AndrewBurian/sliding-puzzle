@@ -2,8 +2,8 @@
     <canvas id="board" width="500" height="500"></canvas>
 </div>
 <div>
-    Enter solution: <input id="steps" width="300"/><br/>
-    Enter Game:<br/><textarea id="game" width="300" height="50"></textarea>
+    Enter solution: <input id="moves" width="300"/><br/>
+    Enter Game:<br/><textarea id="game" width="3000" height="500"></textarea>
 </div>
 <button onclick="startgame()">Start</button><br/>
 <span id="message"/>
@@ -16,42 +16,112 @@
         started = false;
     }
 
+    // size if the game board. (nxn)
     gameSize = 0;
+
+    // puzzle object
     gameData = {};
+
+    // array of moves
+    moves = [];
+
+    // rendering sizes
     tileSize = 0;
     tileSpace = 15;
+
+    // handle to game interval timer
+    gameInterval = 0;
+
+    // location of the space
+    gapX = 0;
+    gapY = 0;
+
 
     // Called by the button
     function startgame() {
         try {
+            // game data
             gameData = JSON.parse(document.getElementById("game").value);
             gameSize = gameData.puzzle.length;
             tileSize = (canv.width - ((gameSize + 1) * tileSpace)) / gameSize;
-
+            ctx.font = '48px serif';
             console.log("Game size "+gameSize);
-            game()
+
+            // move data
+            moves = JSON.parse(document.getElementById("moves").value);
+
+            renderBoard();
+            gameInterval = setInterval(game, 1500);
         } catch (ex) {
             console.log(ex);
         }
     }
 
-    // Run the game
-    function game() {
+    function stopgame(msg) {
+        if (msg) {
+            console.error(msg)
+        }
+        window.clearInterval(gameInterval)
+    }
+
+    function renderBoard() {
         // black out the board
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canv.width, canv.height);
 
-        // count along the rows and columns
-        ctx.fillStyle = "lime";
+        // Render
         xPos = yPos = tileSpace;
-        for (x = 0; x < gameSize; x++){
-            for (y = 0; y < gameSize; y++) {
-                ctx.fillRect(xPos, yPos, tileSize, tileSize);
+        for (y = 0; y < gameSize; y++){
+            for (x = 0; x < gameSize; x++) {
+                
+                // render and find the gap
+                if (gameData.puzzle[x][y] != -1) {
+                    ctx.fillStyle = "lime";
+                    ctx.fillRect(xPos, yPos, tileSize, tileSize);
+                    ctx.fillStyle = "black"
+                    ctx.fillText(gameData.puzzle[x][y], xPos + 48, yPos + 48);
+                } else {
+                    gapX = x;
+                    gapY = y;
+                }
+
                 yPos += tileSize + tileSpace;
             }
             yPos = tileSpace;
             xPos += tileSize + tileSpace;
         }
+    }
+
+    // Run the game
+    function game() {
+
+        // Perform the move
+        move = moves[0];
+        moves = moves.slice(1);
+
+        switch (move) {
+            case "u":
+            case "U":
+                if (gapY == gameSize - 1) {
+                    stopgame("Cannot shift up on bottom edge");
+                    break;
+                }
+                gameData.puzzle[gapX][gapY] = gameData.puzzle[gapX][gapY + 1];
+                gameData.puzzle[gapX][gapY + 1] = -1;
+                break;
+            case "d":
+            case "D":
+                break;
+            case "l":
+            case "L":
+                break;
+            case "r":
+            case "R":
+                break;
+        }
+
+        renderBoard();
+
     }
 
     
