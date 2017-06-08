@@ -73,13 +73,6 @@
         }
     }
 
-    function stopgame(msg) {
-        if (msg) {
-            console.error(msg)
-        }
-        window.clearInterval(gameInterval)
-    }
-
     function renderBoard(color) {
         // black out the board
         ctx.fillStyle = "black";
@@ -110,12 +103,12 @@
 
     function winGame() {
         renderBoard(win);
-        stopgame();
+        window.clearInterval(gameInterval);
     }
 
     function loseGame() {
         renderBoard(lose);
-        stopgame();
+        window.clearInterval(gameInterval);
     }
 
     // check for a sucess state
@@ -151,7 +144,7 @@
         switch (move) {
             case "U":
                 if (gapY == gameSize - 1) {
-                    stopgame("Cannot shift up on bottom edge");
+                    loseGame();
                     break;
                 }
                 movX = gapX;
@@ -159,7 +152,7 @@
                 break;
             case "D":
                 if (gapY == 0) {
-                    stopgame("Cannot shift down on top edge");
+                    loseGame();
                     break;
                 }
                 movX = gapX;
@@ -167,7 +160,7 @@
                 break;
             case "L":
                 if (gapX == gameSize - 1) {
-                    stopgame("Cannot left on right edge");
+                    loseGame();
                     break;
                 }
                 movX = gapX + 1;
@@ -175,7 +168,7 @@
                 break;
             case "R":
                 if (gapX == 0) {
-                    stopgame("Cannot right on left edge");
+                    loseGame();
                     break;
                 }
                 movX = gapX - 1;
@@ -201,19 +194,21 @@
         ctx.fillStyle = "black";
         ctx.fillRect(xPos, yPos, tileSize, tileSize);
 
+        advance = 0.3 * Math.cbrt(9.4 * (progress - 0.5)) + 0.5;
+
         // fill it in a little bit towards the target
         switch(move){
             case "U":
-                yPos -= (tileSize + tileSpace) * progress;
+                yPos -= (tileSize + tileSpace) * advance;
                 break;
             case "D":
-                yPos += (tileSize + tileSpace) * progress;
+                yPos += (tileSize + tileSpace) * advance;
                 break;
             case "L":
-                xPos -= (tileSize + tileSpace) * progress;
+                xPos -= (tileSize + tileSpace) * advance;
                 break;
             case "R":
-                xPos += (tileSize + tileSpace) * progress;
+                xPos += (tileSize + tileSpace) * advance;
                 break;
         }
         ctx.fillStyle = active;
