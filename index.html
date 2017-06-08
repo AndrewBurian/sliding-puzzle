@@ -145,7 +145,7 @@
             case "U":
                 if (gapY == gameSize - 1) {
                     loseGame();
-                    break;
+                    return;
                 }
                 movX = gapX;
                 movY = gapY + 1;
@@ -153,7 +153,7 @@
             case "D":
                 if (gapY == 0) {
                     loseGame();
-                    break;
+                    return;
                 }
                 movX = gapX;
                 movY = gapY - 1;
@@ -161,7 +161,7 @@
             case "L":
                 if (gapX == gameSize - 1) {
                     loseGame();
-                    break;
+                    return;
                 }
                 movX = gapX + 1;
                 movY = gapY;
@@ -169,7 +169,7 @@
             case "R":
                 if (gapX == 0) {
                     loseGame();
-                    break;
+                    return;
                 }
                 movX = gapX - 1;
                 movY = gapY;
