@@ -4,7 +4,7 @@
 <div>
     Enter solution: <input id="moves" size="80" placeholder="[&quot;U&quot;,&quot;D&quot;,&quot;L&quot;,&quot;R&quot;...]"/><br/>
     Enter Game:<br/><textarea id="game" rows="10" cols="80"></textarea><br/>
-    Speed (frames/move): <input id="speed" type="number" max="100" min="1" value="15"/>
+    Speed (frames/move): <input id="speed" onchange="updateSpeed()" type="number" max="100" min="1" value="15"/>
 </div>
 <button onclick="startgame()">Start</button><br/>
 <button onclick="load3game()">3x3</button>
@@ -78,7 +78,7 @@
 
             // move data
             moves = JSON.parse(document.getElementById("moves").value);
-
+            
             // set the speed
             frameRate = document.getElementById("speed").value;
 
@@ -87,6 +87,11 @@
         } catch (ex) {
             console.log(ex);
         }
+    }
+
+    function updateSpeed() {
+        // set the speed
+        frameRate = document.getElementById("speed").value;
     }
 
     function renderBoard(color) {
@@ -120,11 +125,13 @@
     function winGame() {
         renderBoard(win);
         window.clearInterval(gameInterval);
+        started = false;
     }
 
     function loseGame() {
         renderBoard(lose);
         window.clearInterval(gameInterval);
+        started = false;
     }
 
     // check for a sucess state
