@@ -10,7 +10,8 @@
 <button onclick="load3game()">3x3</button>
 <button onclick="load4game()">4x4</button>
 <button onclick="load11game()">11x11</button>
-<button onclick="load20game()">20x20</button>
+<button onclick="load20game()">20x20</button><br/>
+<button onclick="demo()">Demo</button>
 <span id="message"/>
 <script>
 
@@ -319,6 +320,16 @@
                 [111,394,187,50,399,367,360,169,321,68,363,83,293,33,224,162,222,364,51,32]
             ]
         }); 
+    }
+    function demo(){
+        if (started) {
+            return;
+        }
+        load4game();
+        document.getElementById("moves").value = JSON.stringify(
+            ["U", "R", "R", "D", "L", "D", "R", "U", "L", "L", "U", "R", "D", "L", "U", "R", "D", "L", "U", "L", "D", "R", "U", "L", "U", "R", "R", "D", "L", "D", "R", "U", "L", "L", "U", "R", "D", "R", "D", "D", "L", "U", "U", "R", "D", "L", "D", "L", "U", "R", "R", "U", "L", "U", "R", "R", "D", "L", "D", "D", "L", "U", "R", "U", "L", "D", "L", "U", "U", "R", "R", "D", "L", "D", "D", "R", "U", "U", "U", "L", "L", "D", "D", "R", "U", "R", "D", "L", "L", "U", "R", "D", "D", "L", "U", "R", "U", "L", "D", "D", "R", "U", "R", "U", "L", "U", "R", "R", "D", "L", "U", "L", "D", "R", "R", "U", "L", "L", "D", "R", "U", "L", "L", "D", "R", "R", "U", "L", "D", "L", "U", "R", "D", "L", "U", "R", "R", "D", "L", "L", "U", "R", "D", "R", "U", "L", "L"]
+        );
+        startgame();
     }
     
 </script>
