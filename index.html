@@ -4,7 +4,7 @@
 <div>
     Enter solution: <input id="moves" size="80" placeholder="[&quot;U&quot;,&quot;D&quot;,&quot;L&quot;,&quot;R&quot;...]"/><br/>
     Enter Game:<br/><textarea id="game" rows="10" cols="80"></textarea><br/>
-    Speed (frames/move): <input id="speed" type="number" max="100" min="1"/>
+    Speed (frames/move): <input id="speed" type="number" max="100" min="1" value="15"/>
 </div>
 <button onclick="startgame()">Start</button><br/>
 <span id="message"/>
@@ -56,6 +56,14 @@
     // Called by the button
     function startgame() {
         try {
+            // refuse to overwrite existing game
+            if (started) {
+                console.error("Game in progress");
+                return;
+            }
+
+            started = true;
+
             // game data
             gameData = JSON.parse(document.getElementById("game").value);
             gameSize = gameData.puzzle.length;
@@ -66,10 +74,10 @@
             // move data
             moves = JSON.parse(document.getElementById("moves").value);
 
+            // set the speed
             frameRate = document.getElementById("speed").value;
 
             renderBoard(active);
-            time = 300 + (1000 / moves.length)
             game();
         } catch (ex) {
             console.log(ex);
@@ -139,6 +147,7 @@
         // Perform the move
         if (moves.length == 0) {
             checkGame();
+            started = false;
             return;
         }
         move = moves[0].toUpperCase();
