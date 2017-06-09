@@ -3,7 +3,8 @@
 </div>
 <div>
     Enter solution: <input id="moves" size="80" placeholder="[&quot;U&quot;,&quot;D&quot;,&quot;L&quot;,&quot;R&quot;...]"/><br/>
-    Enter Game:<br/><textarea id="game" rows="10" cols="80"></textarea>
+    Enter Game:<br/><textarea id="game" rows="10" cols="80"></textarea><br/>
+    Speed (frames/move): <input id="speed" type="number" max="100" min="1"/>
 </div>
 <button onclick="startgame()">Start</button><br/>
 <span id="message"/>
@@ -64,6 +65,8 @@
 
             // move data
             moves = JSON.parse(document.getElementById("moves").value);
+
+            frameRate = document.getElementById("speed").value;
 
             renderBoard(active);
             time = 300 + (1000 / moves.length)
